@@ -1,132 +1,294 @@
-Here’s a catchy, GitHub‑ready README you can paste into your README.md (overwrite the old one if you like).
+🚀 AI Career Copilot
+Your LLM-Powered Career Intelligence Platform
+🌟 Overview
 
-AI Career Copilot – LLM‑Powered Career Intelligence Platform
-🚀 What is AI Career Copilot?
-AI Career Copilot is a full‑stack, LLM‑powered career intelligence platform that treats your career like a product roadmap.
+AI Career Copilot transforms your career into a data-driven product roadmap.
 
-Upload your resume once, then use the dashboard to:
+Upload your resume once—and unlock a powerful dashboard that helps you:
 
-Score your resume for ATS
-Match it to real job descriptions
-See what skills the market actually wants
-Generate a skill‑gap roadmap
-Practice interviews with an AI interviewer
-All wrapped in a clean, SaaS‑style React dashboard backed by a FastAPI microservice layer and Groq‑hosted LLMs.
+📊 Optimize for ATS systems
 
-🎯 Key Features
-ATS Resume Checker
+🎯 Match real job descriptions
 
-Upload a PDF resume and a target role.
-Get a 0–100 ATS score, missing keywords, and concrete recommendations.
-Visualized as a progress bar + readiness label.
-Resume ↔ Job Match Scoring
+📈 Track in-demand market skills
 
-Compare your resume to a specific job description.
-See match score, matching vs missing skills, and improvement suggestions.
-Market Skills Analyzer
+🧠 Identify skill gaps
 
-Query the market for a role (e.g. “Data Scientist”, “ML Engineer”).
-Aggregate job descriptions and extract top, in‑demand skills.
-Displayed as ranked bars with demand percentages.
-Skill Gap & Roadmap (via agents)
+🎤 Practice interviews with AI
 
-Use ATS + job match + market skills to identify gaps.
-Generate a roadmap of what to learn and in what order.
-AI Interview Simulator
+All wrapped in a modern SaaS-style UI powered by LLMs + FastAPI + React.
 
-Start a session for a target role.
-Get adaptive questions, submit answers, and receive structured feedback.
-Final interview summary with strengths, weaknesses, and next‑step coaching.
-Auth + Day/Night Mode
+✨ Key Features
+📄 ATS Resume Checker
 
-Email/password signup & login (demo auth backed by SQLite).
-Day/Night toggle with persisted preference for a “real product” feel.
-🧩 End‑to‑End Workflow
+Upload your resume (PDF) + target role
+
+Get a 0–100 ATS score
+
+Identify missing keywords
+
+Receive actionable improvement tips
+
+Visual feedback with progress bars & readiness labels
+
+🔗 Resume ↔ Job Match
+
+Compare resume with real job descriptions
+
+See:
+
+✅ Matching skills
+
+❌ Missing skills
+
+📊 Match score
+
+Get tailored suggestions to improve alignment
+
+📊 Market Skills Analyzer
+
+Query roles like “Data Scientist” or “ML Engineer”
+
+Aggregates job listings
+
+Extracts top in-demand skills
+
+Displays ranked demand insights
+
+🧠 Skill Gap & Roadmap Generator
+
+Combines:
+
+ATS results
+
+Job match insights
+
+Market demand
+
+Outputs a personalized learning roadmap:
+
+What to learn
+
+In what order
+
+Why it matters
+
+🎤 AI Interview Simulator
+
+Start role-based interview sessions
+
+Get adaptive questions
+
+Submit answers & receive:
+
+📌 Structured feedback
+
+💪 Strengths & weaknesses
+
+🚀 Final coaching summary
+
+🔐 Auth + Theme System
+
+Email/password authentication (SQLite demo)
+
+🌙 Day/Night mode toggle
+
+Preferences persist like a real SaaS product
+
+🔄 End-to-End Workflow
 Resume Upload (PDF)
-→ Resume Parsing
-→ ATS Score Analysis
-→ Resume ↔ Job Match
-→ Job Market Skill Analysis
-→ Skill Gap Detection
-→ Career Roadmap Generation
-→ AI Interview Simulation
-→ Final Career Insights Dashboard
+        ↓
+Resume Parsing
+        ↓
+ATS Score Analysis
+        ↓
+Resume ↔ Job Match
+        ↓
+Market Skill Analysis
+        ↓
+Skill Gap Detection
+        ↓
+Career Roadmap Generation
+        ↓
+AI Interview Simulation
+        ↓
+Final Career Insights Dashboard
+🧩 Agent-Based Architecture
 
-Each step is handled by a dedicated agent/service:
+Each step is powered by specialized AI agents:
 
-Resume Parser: extracts clean text from PDFs.
-ATS Agent: prompts the LLM to score ATS‑friendliness and suggest improvements.
-Job Match Agent: compares resume vs JD and outputs JSON with scores & skills.
-Job Scraper + Market Analyzer Agent: pulls job data and extracts in‑demand skills.
-Gap + Roadmap Agents: turn gaps into a learning plan.
-Interview Agent: orchestrates questions, evaluates answers, and summarizes performance.
-All intermediate outputs are JSON so the frontend can render them as metrics, charts, and cards.
+📥 Resume Parser → Extracts structured text
+
+📊 ATS Agent → Scores + suggests improvements
+
+🔗 Job Match Agent → Compares resume vs JD
+
+🌐 Market Analyzer Agent → Extracts demand signals
+
+🧠 Gap + Roadmap Agents → Build learning paths
+
+🎤 Interview Agent → Simulates + evaluates interviews
+
+👉 All outputs are structured JSON, enabling rich UI rendering.
 
 🏗️ System Architecture
-Frontend: React + Vite + Tailwind
+🖥️ Frontend
 
-Modern SaaS‑style layout
-Protected routes with auth context
-Day/Night theme with persisted preference
-Backend: FastAPI
+React + Vite
 
-REST API for:
-Auth (/auth/*)
-ATS checks
-Resume–Job match
-Market skills
-Interview sessions
-Agents encapsulate the prompting + post‑processing logic.
-AI Layer: Groq LLM APIs
+TypeScript
 
-OpenAI‑compatible chat completions.
-Models used for:
-ATS analysis
-Job–resume matching
-Market skill extraction
-Interview Q&A & coaching.
-Data & Infra
+Tailwind CSS
 
-SQLite (dev) via SQLAlchemy + Alembic migrations.
-Tables for:
+Auth context + protected routes
+
+Persistent theme system
+
+⚙️ Backend
+
+FastAPI
+
+REST APIs:
+
+/auth/*
+
+/ats-check-file
+
+/job-match
+
+/market-skills
+
+/interview
+
+Modular agent services
+
+🤖 AI Layer
+
+Groq LLM APIs (OpenAI-compatible)
+
+Handles:
+
+ATS scoring
+
+Resume ↔ job matching
+
+Skill extraction
+
+Interview simulation
+
+🗄️ Data Layer
+
+SQLite (dev)
+
+SQLAlchemy + Alembic
+
+Tables:
+
 Users
-Refresh tokens
-Email verification + password reset tokens (for realistic auth flows).
-Request flow example (ATS check):
 
-User (React) → POST /ats-check-file (FastAPI) → Resume parser → ATS agent → Groq LLM → JSON result → UI metrics + visuals.
+Tokens (auth, reset, verification)
 
+🔁 Example Request Flow
+User (React UI)
+   ↓
+POST /ats-check-file
+   ↓
+FastAPI Backend
+   ↓
+Resume Parser
+   ↓
+ATS Agent
+   ↓
+Groq LLM
+   ↓
+JSON Response
+   ↓
+UI Metrics + Visualizations
 💻 Tech Stack
 Frontend
 
-React + Vite
+React
+
+Vite
+
 TypeScript
+
 Tailwind CSS
+
 Backend
 
 FastAPI
-SQLAlchemy + Alembic
-SQLite (dev; easily swappable to Postgres)
+
+SQLAlchemy
+
+Alembic
+
+SQLite
+
 AI / Integrations
 
-Groq LLM APIs (OpenAI‑compatible)
-PDF parsing for resumes
-(Optional) Job scraping via external API
+Groq LLM APIs
+
+PDF parsing
+
+Job data APIs (optional scraping)
+
 🧪 Example User Journey
-Sign up / Log in
 
-Create an account or log back in, choose Day or Night mode.
-Upload Resume & Run ATS
+🔐 Sign Up / Login
 
-Get a 0–100 ATS score + a progress bar and readiness label.
-See missing keywords and concrete suggestions.
-Paste Job Description
+📄 Upload Resume → Get ATS Score
 
-Compare resume ↔ JD to see match score and missing skills.
-Analyze Market Skills
+📌 Paste Job Description → Match Analysis
 
-Enter a target role and fetch a skill‑demand view.
-Plan & Practice
+📊 Analyze Market Skills
 
-Use skill gaps to plan your roadmap.
-Run an AI interview session and review the structured feedback & final summary.
+🧠 Generate Skill Roadmap
+
+🎤 Practice Interview with AI
+
+🚀 Review Final Career Insights Dashboard
+
+🎯 Why This Project Stands Out
+
+✅ Real-world SaaS architecture
+✅ Multi-agent LLM orchestration
+✅ End-to-end career intelligence pipeline
+✅ Clean UI + structured AI outputs
+✅ Practical + portfolio-worthy
+
+🚀 Getting Started
+# Clone repo
+git clone https://github.com/your-username/ai-career-copilot.git
+
+# Frontend
+cd frontend
+npm install
+npm run dev
+
+# Backend
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload
+🛠️ Future Improvements
+
+📊 Advanced analytics dashboard
+
+🌍 Real-time job scraping pipelines
+
+🧾 Resume auto-enhancement generator
+
+🤝 LinkedIn/GitHub integration
+
+☁️ Deployment (Docker + cloud)
+
+🤝 Contributing
+
+Contributions are welcome!
+Feel free to fork, open issues, or submit PRs 🚀
+
+📄 License
+
+MIT License
+
+🔥 Turn your career into a product. Build it. Optimize it. Ship it.
