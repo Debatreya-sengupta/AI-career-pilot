@@ -1,0 +1,1 @@
+API_BASE_URL = "http://localhost:8000/api"  # Base URL for the FastAPI backend API
