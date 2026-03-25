@@ -1,0 +1,12 @@
+[tool.pyright]
+include = ["app"]
+venvPath = "."
+venv = "venv"
+
+[tool.pyre]
+source_directories = ["app"]
+binary = "venv/Scripts/pyre.exe"
+search_path = [
+    "app",
+    "venv/Lib/site-packages"
+]

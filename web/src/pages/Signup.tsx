@@ -3,14 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
 
-function Card(props: { children: React.ReactNode }) {
-  return (
-    <div className="card-surface rounded-2xl border p-5 shadow-sm backdrop-blur">
-      {props.children}
-    </div>
-  )
-}
-
 export function Signup() {
   const { signup } = useAuth()
   const { mode, toggle } = useTheme()
@@ -22,114 +14,89 @@ export function Signup() {
   const [err, setErr] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const canSubmit = useMemo(
-    () => email.trim().length > 0 && password.length >= 8 && password === confirm,
-    [email, password, confirm],
-  )
+  const passwordMatch = password.length >= 8 && password === confirm
+  const canSubmit = useMemo(() => email.trim().length > 0 && passwordMatch, [email, passwordMatch])
 
   async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setErr(null)
-    setLoading(true)
-    try {
-      await signup(email, password)
-      nav('/', { replace: true })
-    } catch (e: any) {
-      setErr(e?.message ?? String(e))
-    } finally {
-      setLoading(false)
-    }
+    e.preventDefault(); setErr(null); setLoading(true)
+    try { await signup(email, password); nav('/', { replace: true }) }
+    catch (e: any) { setErr(e?.message ?? String(e)) }
+    finally { setLoading(false) }
   }
 
   return (
     <div className="app-bg min-h-screen">
-      <div className="mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-6 px-4 py-10 lg:grid-cols-2">
+      <div className="mx-auto grid min-h-screen max-w-5xl grid-cols-1 items-center gap-8 px-5 py-12 lg:grid-cols-2">
+        {/* Left panel */}
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/60 px-3 py-1 text-xs text-slate-700 backdrop-blur dark:border-white/10 dark:bg-black/20 dark:text-slate-200">
-            <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-indigo-500/70 to-pink-500/60">
-              🚀
-            </span>
-            AI Career Copilot
+          <div className="flex items-center gap-2.5 mb-6">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'}}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <span className="text-sm font-semibold" style={{color: 'var(--color-text)'}}>AI Career Copilot</span>
           </div>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
-            Let’s build your next offer.
+
+          <h1 className="text-4xl font-extrabold leading-tight">
+            <span className="gradient-text">Let's build</span>
+            <br />
+            <span style={{color: 'var(--color-text)'}}>your next offer.</span>
           </h1>
-          <p className="mt-2 max-w-xl text-sm text-slate-700 dark:text-slate-300">
+          <p className="mt-3 text-sm leading-relaxed max-w-sm" style={{color: 'var(--color-text-dim)'}}>
             New here? Create an account and turn your resume into a clear plan — score → gaps → roadmap → interview-ready.
           </p>
-          <button
-            onClick={toggle}
-            className="mt-4 inline-flex items-center gap-2 rounded-xl border border-slate-900/10 bg-white/70 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-white/90 dark:border-white/10 dark:bg-black/20 dark:text-slate-200 dark:hover:bg-black/30"
-          >
-            {mode === 'dark' ? '🌙 Night mode' : '☀️ Day mode'} · Toggle
+
+          <div className="mt-6 rounded-2xl p-4 space-y-2" style={{background: 'var(--color-surface)', border: '1px solid var(--color-border)'}}>
+            <div className="text-xs font-semibold mb-3" style={{color: 'var(--color-primary)'}}>Free to get started</div>
+            {['Resume ATS scoring', 'Job match analysis', 'Live skill demand data', 'AI interview practice'].map(f => (
+              <div key={f} className="flex items-center gap-2 text-xs" style={{color: 'var(--color-text-dim)'}}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                {f}
+              </div>
+            ))}
+          </div>
+
+          <button onClick={toggle} className="btn-ghost mt-5 text-xs">
+            {mode === 'dark' ? 'Night mode' : 'Day mode'}
           </button>
         </div>
 
-        <Card>
-          <div className="flex items-end justify-between">
+        {/* Right — form */}
+        <div className="card-surface rounded-2xl p-7">
+          <div className="flex items-end justify-between mb-6">
             <div>
-              <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Account</div>
-              <div className="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-50">Sign up</div>
+              <div className="text-[11px] font-medium uppercase tracking-widest" style={{color: 'var(--color-text-muted)'}}>Account</div>
+              <div className="text-xl font-bold mt-0.5" style={{color: 'var(--color-text)'}}>Create account</div>
             </div>
-            <Link className="text-xs font-semibold text-indigo-600 hover:underline dark:text-indigo-300" to="/login">
+            <Link to="/login" className="text-xs font-medium" style={{color: 'var(--color-primary)', textDecoration: 'none'}}>
               Back to login
             </Link>
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 space-y-3">
-            <label className="block">
-              <div className="text-xs text-slate-600 dark:text-slate-300">Email</div>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                inputMode="email"
-                placeholder="you@domain.com"
-                className="mt-1 w-full rounded-xl border border-slate-900/10 bg-white/70 px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-500/60 dark:border-white/10 dark:bg-black/20 dark:text-slate-100"
-              />
-            </label>
-
-            <label className="block">
-              <div className="text-xs text-slate-600 dark:text-slate-300">Password</div>
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                autoComplete="new-password"
-                placeholder="Minimum 8 characters"
-                className="mt-1 w-full rounded-xl border border-slate-900/10 bg-white/70 px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-500/60 dark:border-white/10 dark:bg-black/20 dark:text-slate-100"
-              />
-            </label>
-
-            <label className="block">
-              <div className="text-xs text-slate-600 dark:text-slate-300">Confirm password</div>
-              <input
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                type="password"
-                autoComplete="new-password"
-                placeholder="Repeat password"
-                className="mt-1 w-full rounded-xl border border-slate-900/10 bg-white/70 px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-500/60 dark:border-white/10 dark:bg-black/20 dark:text-slate-100"
-              />
-            </label>
-
-            {err ? (
-              <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-700 dark:text-rose-200">
-                {err}
-              </div>
-            ) : null}
-
-            <button
-              type="submit"
-              disabled={!canSubmit || loading}
-              className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600/90 to-pink-600/80 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
-            >
-              {loading ? 'Creating…' : 'Create account'}
+          <form onSubmit={onSubmit} className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium" style={{color: 'var(--color-text-dim)'}}>Email</label>
+              <input value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" inputMode="email" placeholder="you@domain.com" className="field-input" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium" style={{color: 'var(--color-text-dim)'}}>Password</label>
+              <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" autoComplete="new-password" placeholder="Minimum 8 characters" className="field-input" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium" style={{color: 'var(--color-text-dim)'}}>Confirm password</label>
+              <input value={confirm} onChange={(e) => setConfirm(e.target.value)} type="password" autoComplete="new-password" placeholder="Repeat password" className="field-input" />
+              {confirm.length > 0 && !passwordMatch && (
+                <p className="mt-1 text-[11px]" style={{color: 'var(--color-rose)'}}>Passwords don't match or too short</p>
+              )}
+            </div>
+            {err && <div className="banner-error">{err}</div>}
+            <button type="submit" disabled={!canSubmit || loading} className="btn-primary w-full">
+              {loading ? <><span className="spinner" />Creating…</> : 'Create account'}
             </button>
           </form>
-        </Card>
+        </div>
       </div>
     </div>
   )
 }
-

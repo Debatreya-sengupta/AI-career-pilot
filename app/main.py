@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import json
 import re
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, cast
 from app.agents.profile_agent import analyze_profile
 from app.models.schemas import SkillGapRequest, RoadmapRequest
 from app.agents.gap_agent import calculate_skill_gap   
@@ -87,7 +87,7 @@ async def evaluate(request: InterviewEvaluationRequest):
 
     try:
         parsed = json.loads(result)
-    except:
+    except Exception:
         parsed = {"raw_response": result}
 
     return parsed
@@ -121,7 +121,7 @@ async def finish(request: FinishInterviewRequest):
 
     try:
         parsed_summary = json.loads(summary)
-    except:
+    except Exception:
         parsed_summary = {"raw_response": summary}
 
     return parsed_summary
@@ -172,9 +172,10 @@ async def ats_check_file(role: str, file: UploadFile = File(...)):
     try:
         parsed = json.loads(cleaned)
         return parsed
-    except Exception:
+    except Exception as e:
         return {
-            "error": "Failed to parse JSON",
+            "error": "Failed to parse ATS response",
+            "detail": str(e),
             "raw_response": result
         }
     
@@ -190,9 +191,10 @@ async def resume_job_match(job_description: str, file: UploadFile = File(...)):
     try:
         parsed = json.loads(cleaned)
         return parsed
-    except:
+    except Exception as e:
         return {
-            "error": "Failed to parse JSON",
+            "error": "Failed to parse match response",
+            "detail": str(e),
             "raw_response": result
         }
 
@@ -260,23 +262,26 @@ async def finish_interview_dashboard(request: FinishInterviewRequest):
         parsed_summary = {"raw_response": summary}
 
     # The dashboard expects 0-100 score. Agent may return 1-10.
-    score = parsed_summary.get("final_score")
-    try:
-        score_f = float(score)
-        if 0 <= score_f <= 10:
-            parsed_summary["final_score"] = int(round(score_f * 10))
-        else:
-            parsed_summary["final_score"] = int(round(score_f))
-    except Exception:
-        pass
+    # Cast to dict to satisfy linter and check for None
+    p_sum = cast(Dict[str, Any], parsed_summary)
+    score = p_sum.get("final_score")
+    if score is not None:
+        try:
+            score_f = float(score)
+            if 0 <= score_f <= 10:
+                p_sum["final_score"] = int(round(score_f * 10))
+            else:
+                p_sum["final_score"] = int(round(score_f))
+        except (ValueError, TypeError):
+            pass
 
-    return parsed_summary
+    return p_sum
 
 
 @app.get("/market-skills")
 async def market_skills(role: str):
     """Get market skills for a role"""
-    jobs = scrape_jobs(role)
+    jobs = scrape_jobs(role, summarize=False)
 
     if not jobs:
         return {"error": "No jobs found", "role": role, "top_skills": []}
@@ -287,12 +292,24 @@ async def market_skills(role: str):
         return {"error": "No job descriptions available", "role": role, "top_skills": []}
 
     skills = extract_skills_from_jobs(descriptions)
-    
-    # Format skills for dashboard
-    formatted_skills = [
-        {"name": skill, "demand": 75 + (hash(skill) % 25)} 
-        for skill in skills
-    ]
+
+    # Calculate real frequency-based demand score from job descriptions
+    combined_text = " ".join(descriptions).lower()
+    total_jobs = len(descriptions)
+
+    formatted_skills = []
+    for skill in skills:
+        skill_lower = skill.lower()
+        # Count how many job descriptions mention this skill
+        mention_count = sum(1 for desc in descriptions if skill_lower in desc.lower())
+        # Convert to a 0-100 demand percentage
+        demand_pct = int((mention_count / total_jobs) * 100) if total_jobs > 0 else 50
+        # Clamp between 10 and 100 for display purposes
+        demand_pct = max(10, min(100, demand_pct))
+        formatted_skills.append({"name": skill, "demand": demand_pct})
+
+    # Sort by demand descending
+    formatted_skills.sort(key=lambda x: x["demand"], reverse=True)
 
     return {
         "role": role,

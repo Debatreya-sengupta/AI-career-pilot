@@ -14,11 +14,12 @@ const STORAGE_KEY = 'ai-career-copilot:theme'
 function getInitialMode(): ThemeMode {
   const saved = localStorage.getItem(STORAGE_KEY)
   if (saved === 'light' || saved === 'dark') return saved
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  // Default to dark mode for premium feel
+  return 'dark'
 }
 
 function applyMode(mode: ThemeMode) {
-  document.documentElement.classList.toggle('dark', mode === 'dark')
+  document.documentElement.classList.toggle('light', mode === 'light')
 }
 
 export function ThemeProvider(props: { children: React.ReactNode }) {
